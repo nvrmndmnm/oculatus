@@ -10,7 +10,7 @@ import (
 
 func main() {
 	var tickers = strings.Split(os.Args[1], ",")
-	fmt.Printf("+%s+|\n", strings.Repeat("-", 50))
+	fmt.Printf("+%s+\n", strings.Repeat("-", 50))
 	for index, ticker := range tickers {
 		resp, err := goyhfin.GetTickerData(ticker, goyhfin.OneDay, goyhfin.FiveMinutes, false)
 		if err != nil {
@@ -20,7 +20,8 @@ func main() {
 
 		fmt.Printf("| %3c %10.2f ", strings.Trim(ticker, "^")[0], resp.Quotes[0].High)
 		if (index+1)%3 == 0 {
-			fmt.Printf("\n+%s+|\n", strings.Repeat("-", 50))
+			fmt.Printf("|\n+%s+\n", strings.Repeat("-", 50))
 		}
 	}
+	fmt.Print("\033[H\033[2J")
 }
