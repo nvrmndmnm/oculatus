@@ -3,9 +3,11 @@ package main
 import (
 	"fmt"
 	"os"
+	"strconv"
 	"strings"
 	"time"
 
+	"github.com/mbndr/figlet4go"
 	"github.com/svarlamov/goyhfin"
 )
 
@@ -26,18 +28,24 @@ func PrintTickerData(tickers []string) {
 	//print this gibberish to clear terminal
 	fmt.Print("\033[H\033[2J")
 
-	fmt.Printf("+%s+\n", strings.Repeat("-", 50))
+	ascii := figlet4go.NewAsciiRender()
+	options := figlet4go.NewRenderOptions()
+	options.FontName = "univers"
+	ascii.LoadFont("./assets")
 
-	for index, ticker := range tickers {
-		resp, err := goyhfin.GetTickerData(ticker, goyhfin.OneDay, goyhfin.FiveMinutes, false)
+	for _, ticker := range tickers {
+		resp, err := goyhfin.GetTickerData(ticker, goyhfin.OneDay, goyhfin.ThirtyMinutes, false)
 		if err != nil {
 			fmt.Println("error fetching data:", err)
 			panic(err)
 		}
 
-		fmt.Printf("| %3c %10.2f ", strings.Trim(ticker, "^")[0], resp.Quotes[0].High)
-		if (index+1)%3 == 0 {
-			fmt.Printf("|\n+%s+\n", strings.Repeat("-", 50))
-		}
+		tickerString := string(strings.Trim(ticker, "^")[0]) + ": "
+		valueString := strconv.FormatFloat(resp.Quotes[0].High, 'f', 2, 64)
+
+		renderTicker, _ := ascii.RenderOpts(tickerString, options)
+		renderValue, _ := ascii.RenderOpts(valueString, options)
+
+		fmt.Printf("%4s, %10s", renderTicker, renderValue)
 	}
 }
