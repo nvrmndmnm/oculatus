@@ -45,8 +45,10 @@ func FetchData(tickers []string) {
 		tickerString := string(strings.Trim(resp.Symbol, "^")[0]) + "  "
 		valueString := strconv.FormatFloat(resp.Quotes[len(resp.Quotes)-1].Close, 'f', 2, 64) + "  "
 
+		changeColor := "91"
 		changeString := strconv.FormatFloat(change, 'f', 2, 64)
 		if change >= 0 {
+			changeColor = "92"
 			changeString = "+" + changeString
 		}
 
@@ -54,27 +56,39 @@ func FetchData(tickers []string) {
 		renderValue, _ := ascii.RenderOpts(valueString, options)
 		renderChange, _ := ascii.RenderOpts(changeString, options)
 
-		data = append(data, []string{renderTicker, renderValue, renderChange})
+		data = append(data, []string{renderTicker, renderValue, renderChange, changeColor})
 	}
 
 	printData(data)
 }
 
 func printData(data [][]string) {
+	//print this gibberish to clear terminal
+	fmt.Print("\033[H\033[2J")
+
 	tableString := &strings.Builder{}
 	table := tablewriter.NewWriter(tableString)
 
+	table.SetHeader([]string{"", "", ""})
+	table.SetHeaderLine(false)
 	table.SetAutoWrapText(false)
 	table.SetAlignment(tablewriter.ALIGN_LEFT)
 	table.SetColumnSeparator("")
 	table.SetBorder(false)
 	table.SetTablePadding("\t")
 
-	table.AppendBulk(data)
-	table.Render()
+	for _, v := range data {
+		colorCode, _ := strconv.Atoi(v[len(v)-1])
 
-	//print this gibberish to clear terminal
-	fmt.Print("\033[H\033[2J")
+		table.SetColumnColor(tablewriter.Colors{
+			tablewriter.Bold, colorCode},
+			tablewriter.Colors{tablewriter.Bold, colorCode},
+			tablewriter.Colors{tablewriter.Bold, colorCode},
+		)
+		table.Append(v[:len(v)-1])
+	}
+
+	table.Render()
 
 	fmt.Println(tableString.String())
 }
