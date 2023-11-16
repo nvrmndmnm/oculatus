@@ -40,13 +40,21 @@ func FetchData(tickers []string) {
 			continue
 		}
 
-		tickerString := string(strings.Trim(ticker, "^")[0]) + "  "
-		valueString := strconv.FormatFloat(resp.Quotes[0].High, 'f', 2, 64)
+		change := 100 - resp.Quotes[0].Open*100/resp.Quotes[len(resp.Quotes)-1].Close
+
+		tickerString := string(strings.Trim(resp.Symbol, "^")[0]) + "  "
+		valueString := strconv.FormatFloat(resp.Quotes[len(resp.Quotes)-1].Close, 'f', 2, 64) + "  "
+
+		changeString := strconv.FormatFloat(change, 'f', 2, 64)
+		if change >= 0 {
+			changeString = "+" + changeString
+		}
 
 		renderTicker, _ := ascii.RenderOpts(tickerString, options)
 		renderValue, _ := ascii.RenderOpts(valueString, options)
+		renderChange, _ := ascii.RenderOpts(changeString, options)
 
-		data = append(data, []string{renderTicker, renderValue})
+		data = append(data, []string{renderTicker, renderValue, renderChange})
 	}
 
 	printData(data)
