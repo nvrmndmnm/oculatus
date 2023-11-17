@@ -28,7 +28,7 @@ func main() {
 func FetchData(tickers []string) {
 	ascii := figlet4go.NewAsciiRender()
 	options := figlet4go.NewRenderOptions()
-	options.FontName = "univers"
+	options.FontName = "colossal"
 	ascii.LoadFont("./assets")
 
 	var data [][]string
