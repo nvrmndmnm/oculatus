@@ -66,29 +66,28 @@ func printData(data [][]string) {
 	//print this gibberish to clear terminal
 	fmt.Print("\033[H\033[2J")
 
-	tableString := &strings.Builder{}
-	table := tablewriter.NewWriter(tableString)
-
-	table.SetHeader([]string{"", "", ""})
-	table.SetHeaderLine(false)
-	table.SetAutoWrapText(false)
-	table.SetAlignment(tablewriter.ALIGN_LEFT)
-	table.SetColumnSeparator("")
-	table.SetBorder(false)
-	table.SetTablePadding("\t")
-
 	for _, v := range data {
+		tableString := &strings.Builder{}
+		table := tablewriter.NewWriter(tableString)
+
+		table.SetHeader([]string{"", "", ""})
+		table.SetHeaderLine(false)
+		table.SetAutoWrapText(false)
+		table.SetAlignment(tablewriter.ALIGN_LEFT)
+		table.SetColumnSeparator("")
+		table.SetBorder(false)
+		table.SetTablePadding("\t")
+
 		colorCode, _ := strconv.Atoi(v[len(v)-1])
 
-		table.SetColumnColor(tablewriter.Colors{
-			tablewriter.Bold, colorCode},
+		table.SetColumnColor(
+			tablewriter.Colors{tablewriter.Bold, colorCode},
 			tablewriter.Colors{tablewriter.Bold, colorCode},
 			tablewriter.Colors{tablewriter.Bold, colorCode},
 		)
+
 		table.Append(v[:len(v)-1])
+		table.Render()
+		fmt.Println(tableString.String())
 	}
-
-	table.Render()
-
-	fmt.Println(tableString.String())
 }
